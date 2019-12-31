@@ -1,20 +1,22 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import org.springframework.beans.factory.annotation.Value;
 import javax.sql.DataSource;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@PropertySource({ "classpath:application.properties" })
 public class AplicacaoFinanceiraApplicationDatabaseConfig {
-    @Bean
-    @Primary
-    @ConfigurationProperties(prefix = "spring.datasource")
-    public DataSource dataSource() {
-        return DataSourceBuilder.create().build();
-    }
+
+  @Value("${spring.datasource.url}")
+  private String dbUrl;
+
+  @Bean
+  public DataSource dataSource() {
+      HikariConfig config = new HikariConfig();
+      config.setJdbcUrl(dbUrl);
+      return new HikariDataSource(config);
+  }
 }
